@@ -633,6 +633,8 @@
             if (distance <= MAX_DELIVERY_DISTANCE) {
                 // Different rates for different distance ranges
                 deliveryCharge = Math.ceil(distance * 10); // ₹10/km for all distances
+                // round off to nearest 10
+                deliveryCharge = Math.ceil(deliveryCharge / 10) * 10;
                 isDeliveryAvailable = true;
                 distanceErrorElement.classList.add('hidden');
                 distanceInfoElement.textContent = `Driving Distance: ${distance.toFixed(1)}km - Delivery Charge: ₹${deliveryCharge}`;
