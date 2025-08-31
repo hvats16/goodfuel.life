@@ -507,6 +507,23 @@
     </div>
 
     <script>
+        /*
+        ========================================
+        DELIVERY CHARGE CALCULATION SETUP
+        ========================================
+        
+        To use actual car route distance calculation:
+        1. Go to Google Cloud Console: https://console.cloud.google.com/
+        2. Create a new project or select existing one
+        3. Enable "Distance Matrix API" and "Maps JavaScript API"
+        4. Create credentials (API Key)
+        5. Replace 'YOUR_API_KEY' below with your actual API key
+        
+        If no API key is provided, the system will use an approximate
+        calculation with a 20% buffer for road distance.
+        ========================================
+        */
+        
         let cart = [];
         let deliveryCharge = 0;
         let deliveryDistance = 0;
@@ -516,7 +533,7 @@
         // Shop coordinates (Dwarka, New Delhi)
         const SHOP_LOCATION = { lat: 28.58517294897767, lng: 77.07168929283343 };
         const MAX_DELIVERY_DISTANCE = 12; // 12 km max delivery radius
-        const DELIVERY_RATE_PER_KM = 10; // ₹10 per kilometer
+        // Note: DELIVERY_RATE_PER_KM is no longer used directly - see calculateDeliveryCharge function
         
         const cartCountElement = document.getElementById('cartCount');
         const cartItemsContainer = document.getElementById('cartItems');
@@ -605,18 +622,25 @@
             updateCartCount();
         }
 
-        // Function to calculate delivery charge based on distance
+        // Function to calculate delivery charge based on actual car route distance
         function calculateDeliveryCharge(distance) {
             if (distance <= MAX_DELIVERY_DISTANCE) {
-                deliveryCharge = Math.ceil(distance * DELIVERY_RATE_PER_KM);
+                // Different rates for different distance ranges
+                if (distance <= 3) {
+                    deliveryCharge = 40; // Fixed rate for very nearby deliveries
+                } else if (distance <= 8) {
+                    deliveryCharge = Math.ceil(distance * 8); // ₹8/km for medium distance
+                } else {
+                    deliveryCharge = Math.ceil(distance * 10); // ₹10/km for longer distance
+                }
                 isDeliveryAvailable = true;
                 distanceErrorElement.classList.add('hidden');
-                distanceInfoElement.textContent = `Distance: ${distance.toFixed(1)}km - Delivery Charge: ₹${deliveryCharge}`;
+                distanceInfoElement.textContent = `Driving Distance: ${distance.toFixed(1)}km - Delivery Charge: ₹${deliveryCharge}`;
             } else {
                 deliveryCharge = 0;
                 isDeliveryAvailable = false;
                 distanceErrorElement.classList.remove('hidden');
-                distanceInfoElement.textContent = `Distance: ${distance.toFixed(1)}km - Beyond delivery range`;
+                distanceInfoElement.textContent = `Driving Distance: ${distance.toFixed(1)}km - Beyond delivery range`;
             }
             deliveryChargeElement.textContent = deliveryCharge;
             updateCartTotal();
@@ -642,10 +666,19 @@
                         lng: position.coords.longitude
                     };
 
-                    // Calculate distance using Haversine formula (straight line distance)
-                    const distance = calculateHaversineDistance(SHOP_LOCATION, userLocation);
-                    deliveryDistance = distance;
-                    calculateDeliveryCharge(distance);
+                    // Calculate distance using actual car route (Google Maps API)
+                    calculateCarRouteDistance(SHOP_LOCATION, userLocation)
+                        .then(distance => {
+                            deliveryDistance = distance;
+                            calculateDeliveryCharge(distance);
+                        })
+                        .catch(error => {
+                            console.error('Error calculating route distance:', error);
+                            // Use fallback calculation
+                            const fallbackDistance = calculateApproximateDistance(SHOP_LOCATION, userLocation);
+                            deliveryDistance = fallbackDistance;
+                            calculateDeliveryCharge(fallbackDistance);
+                        });
 
                     // Hide loading status
                     locationStatusElement.classList.add('hidden');
@@ -681,8 +714,42 @@
             );
         }
 
-        // Function to calculate distance between two points using Haversine formula
-        function calculateHaversineDistance(point1, point2) {
+        // Function to calculate actual car route distance using Google Maps API
+        function calculateCarRouteDistance(origin, destination) {
+            // You need to replace 'YOUR_API_KEY' with your actual Google Maps API key
+            const apiKey = 'YOUR_API_KEY'; // Get this from Google Cloud Console
+            
+            if (!apiKey || apiKey === 'YOUR_API_KEY') {
+                // Fallback to approximate calculation if no API key
+                console.warn('No Google Maps API key provided. Using approximate distance calculation.');
+                return calculateApproximateDistance(origin, destination);
+            }
+            
+            const url = `https://maps.googleapis.com/maps/api/distancematrix/json?origins=${origin.lat},${origin.lng}&destinations=${destination.lat},${destination.lng}&mode=driving&key=${apiKey}`;
+            
+            return fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'OK' && data.rows[0].elements[0].status === 'OK') {
+                        // Extract distance in kilometers
+                        const distanceText = data.rows[0].elements[0].distance.text;
+                        const distanceKm = parseFloat(distanceText.replace(' km', ''));
+                        return distanceKm;
+                    } else {
+                        console.error('Google Maps API error:', data);
+                        // Fallback to approximate calculation
+                        return calculateApproximateDistance(origin, destination);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching route distance:', error);
+                    // Fallback to approximate calculation
+                    return calculateApproximateDistance(origin, destination);
+                });
+        }
+        
+        // Fallback function for approximate distance calculation
+        function calculateApproximateDistance(point1, point2) {
             const R = 6371; // Earth's radius in kilometers
             const dLat = (point2.lat - point1.lat) * Math.PI / 180;
             const dLon = (point2.lng - point1.lng) * Math.PI / 180;
@@ -691,8 +758,10 @@
                 Math.cos(point1.lat * Math.PI / 180) * Math.cos(point2.lat * Math.PI / 180) * 
                 Math.sin(dLon/2) * Math.sin(dLon/2);
             const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-            const distance = R * c; // Distance in kilometers
-            return distance;
+            const straightLineDistance = R * c;
+            
+            // Add 20% buffer for actual road distance (approximate)
+            return straightLineDistance * 1.2;
         }
 
         // Function to update total price
