@@ -511,6 +511,7 @@
         let deliveryCharge = 0;
         let deliveryDistance = 0;
         let isDeliveryAvailable = false;
+        let userLocation = null; // Store user's location coordinates
         
         // Shop coordinates (Dwarka, New Delhi)
         const SHOP_LOCATION = { lat: 28.58517294897767, lng: 77.07168929283343 };
@@ -636,7 +637,7 @@
 
             navigator.geolocation.getCurrentPosition(
                 (position) => {
-                    const userLocation = {
+                    userLocation = {
                         lat: position.coords.latitude,
                         lng: position.coords.longitude
                     };
@@ -826,31 +827,18 @@
 
             const whatsappNumber = "8527594368";
             
-            // Create user location link if we have coordinates, otherwise use shop location as fallback
+            // Use stored user location if available, otherwise use shop location as fallback
             let userLocationLink = "";
-            if (deliveryDistance > 0 && isDeliveryAvailable) {
-                // Get user's current location from the geolocation API
-                navigator.geolocation.getCurrentPosition(
-                    (position) => {
-                        const userLat = position.coords.latitude;
-                        const userLng = position.coords.longitude;
-                        userLocationLink = `https://www.google.com/maps/search/?api=1&query=${userLat},${userLng}`;
-                        
-                        // Send the order with user location
-                        sendOrderToWhatsApp(userLocationLink);
-                    },
-                    (error) => {
-                        console.error('Error getting user location for WhatsApp:', error);
-                        // Fallback to shop location if user location unavailable
-                        userLocationLink = "https://www.google.com/maps/search/?api=1&query=28.58517294897767,77.07168929283343";
-                        sendOrderToWhatsApp(userLocationLink);
-                    }
-                );
+            if (userLocation && deliveryDistance > 0 && isDeliveryAvailable) {
+                // Use the stored user location coordinates
+                userLocationLink = `https://www.google.com/maps/search/?api=1&query=${userLocation.lat},${userLocation.lng}`;
             } else {
-                // Fallback to shop location if no delivery distance calculated
+                // Fallback to shop location if no user location available
                 userLocationLink = "https://www.google.com/maps/search/?api=1&query=28.58517294897767,77.07168929283343";
-                sendOrderToWhatsApp(userLocationLink);
             }
+            
+            // Send the order immediately without additional location requests
+            sendOrderToWhatsApp(userLocationLink);
             
             function sendOrderToWhatsApp(locationLink) {
                 // Always send COD order details to WhatsApp
@@ -894,6 +882,7 @@
                 deliveryCharge = 0;
                 deliveryDistance = 0;
                 isDeliveryAvailable = false;
+                userLocation = null; // Reset user location
                 deliveryChargeElement.textContent = '0';
                 distanceInfoElement.textContent = 'Click "Use Current Location" to calculate delivery charge';
                 distanceErrorElement.classList.add('hidden');
