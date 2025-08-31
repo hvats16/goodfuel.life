@@ -473,7 +473,7 @@
 
             <!-- COD Form - Initially Hidden -->
             <div id="codFormContainer" class="hidden">
-                <h4 class="text-xl font-semibold text-gray-800 mb-4">Cash on Delivery Details:</h4>
+                <h4 class="text-xl font-semibold text-gray-800 mb-4">Cash on Delivery Details (Will be sent to WhatsApp):</h4>
                 <form id="codDetailsForm" class="space-y-4">
                     <div>
                         <label for="customerName" class="block text-sm font-medium text-gray-700">Name</label>
@@ -492,7 +492,7 @@
                             <i class="fas fa-arrow-left mr-2"></i> Back
                         </button>
                         <button type="submit" id="placeCodOrderButton" class="btn-primary flex-1 py-3 shadow-md hover:shadow-lg">
-                            Place COD Order
+                            Send COD Order to WhatsApp
                         </button>
                     </div>
                 </form>
@@ -531,7 +531,7 @@
         const closeModalButton = document.getElementById('closeModalButton');
         const cartIcon = document.getElementById('cartIcon');
         const codButton = document.getElementById('codButton');
-        const whatsappOrderButton = document.getElementById('whatsappOrderButton');
+
         const messageBox = document.getElementById('messageBox');
         const checkoutOptions = document.getElementById('checkoutOptions');
         const codFormContainer = document.getElementById('codFormContainer');
@@ -556,13 +556,11 @@
             if (cart.length === 0) {
                 emptyCartMessage.style.display = 'block';
                 codButton.disabled = true;
-                whatsappOrderButton.disabled = true;
                 checkoutOptions.classList.remove('hidden'); // Show options if cart is empty, but buttons disabled
                 codFormContainer.classList.add('hidden'); // Hide COD form
             } else {
                 emptyCartMessage.style.display = 'none';
                 codButton.disabled = false;
-                whatsappOrderButton.disabled = false;
                 checkoutOptions.classList.remove('hidden'); // Show options
                 codFormContainer.classList.add('hidden'); // Hide COD form initially
                 cart.forEach((item, index) => {
@@ -789,40 +787,14 @@
                 const formTitle = document.querySelector('#codFormContainer h4');
                 const submitButton = document.getElementById('placeCodOrderButton');
                 if (formTitle) formTitle.textContent = 'Cash on Delivery Details:';
-                if (submitButton) submitButton.textContent = 'Place COD Order';
+                if (submitButton) submitButton.textContent = 'Send COD Order to WhatsApp';
                 
                 // Remove any order type flag
                 delete codDetailsForm.dataset.orderType;
             }
         });
 
-        // WhatsApp Order Button (initial choice) Logic
-        whatsappOrderButton.addEventListener('click', () => {
-            if (cart.length > 0) {
-                // Check if delivery is available
-                if (!isDeliveryAvailable) {
-                    messageBox.innerHTML = '<p class="font-semibold text-red-700">Please enter a valid delivery address within 12km radius first.</p>';
-                    messageBox.classList.remove('hidden');
-                    messageBox.classList.remove('bg-green-100', 'text-green-800');
-                    messageBox.classList.add('bg-red-100', 'text-red-700');
-                    return;
-                }
-                
-                // Show customer details form first before redirecting to WhatsApp
-                checkoutOptions.classList.add('hidden'); // Hide initial options
-                codFormContainer.classList.remove('hidden'); // Show the form
-                messageBox.classList.add('hidden'); // Hide any previous message
-                
-                // Change the form title and button to reflect WhatsApp order
-                const formTitle = document.querySelector('#codFormContainer h4');
-                const submitButton = document.getElementById('placeCodOrderButton');
-                if (formTitle) formTitle.textContent = 'WhatsApp Order Details:';
-                if (submitButton) submitButton.textContent = 'Send to WhatsApp';
-                
-                // Add a flag to indicate this is a WhatsApp order
-                codDetailsForm.dataset.orderType = 'whatsapp';
-            }
-        });
+
 
         // Back to Options Button Logic
         backToOptionsButton.addEventListener('click', () => {
@@ -833,8 +805,7 @@
             const formTitle = document.querySelector('#codFormContainer h4');
             const submitButton = document.getElementById('placeCodOrderButton');
             if (formTitle) formTitle.textContent = 'Cash on Delivery Details:';
-            if (submitButton) submitButton.textContent = 'Place COD Order';
-            delete codDetailsForm.dataset.orderType; // Remove the flag
+            if (submitButton) submitButton.textContent = 'Send COD Order to WhatsApp';
         });
 
         // Place COD Order Button (from the form) Logic
@@ -844,8 +815,6 @@
             const customerName = document.getElementById('customerName').value;
             const customerMobile = document.getElementById('customerMobile').value;
             const customerAddress = document.getElementById('customerAddress').value;
-            const orderType = codDetailsForm.dataset.orderType || 'cod';
-
             if (!customerName || !customerMobile || !customerAddress) {
                 // Simple client-side validation for required fields
                 messageBox.innerHTML = '<p class="font-semibold text-red-700">Please fill in all customer details.</p>';
@@ -858,13 +827,8 @@
             const whatsappNumber = "8527594368";
             const googleLocationLink = "https://www.google.com/maps/search/?api=1&query=28.58517294897767,77.07168929283343";
             
-            // Different message format based on order type
-            let orderDetails = "";
-            if (orderType === 'whatsapp') {
-                orderDetails = "Hello, I'd like to place an order via WhatsApp!\n\n";
-            } else {
-                orderDetails = "Hello, I'd like to place a Cash on Delivery order!\n\n";
-            }
+            // Always send COD order details to WhatsApp
+            let orderDetails = "Hello, I'd like to place a Cash on Delivery order!\n\n";
 
             orderDetails += `*Customer Details:*\n`;
             orderDetails += `Name: ${customerName}\n`;
@@ -885,21 +849,15 @@
             console.log("WhatsApp message content before encoding:", orderDetails); // Added for debugging
 
             const encodedMessage = encodeURIComponent(orderDetails);
+            
+            // Open WhatsApp with the order details
             window.open(`https://wa.me/${whatsappNumber}?text=${encodedMessage}`, '_blank');
 
             // After sending to WhatsApp, reset and provide feedback
-            let successMessage = "";
-            if (orderType === 'whatsapp') {
-                successMessage = `
-                    <p class="font-semibold text-lg">Your WhatsApp order has been sent!</p>
-                    <p class="text-sm">We'll contact you shortly to confirm your order.</p>
-                `;
-            } else {
-                successMessage = `
-                    <p class="font-semibold text-lg">Your COD order request has been sent via WhatsApp!</p>
-                    <p class="text-sm">We'll contact you shortly to confirm your order.</p>
-                `;
-            }
+            let successMessage = `
+                <p class="font-semibold text-lg">Your COD order request has been sent via WhatsApp!</p>
+                <p class="text-sm">We'll contact you shortly to confirm your order.</p>
+            `;
             
             messageBox.innerHTML = successMessage;
             messageBox.classList.remove('hidden');
@@ -925,10 +883,9 @@
             const formTitle = document.querySelector('#codFormContainer h4');
             const submitButton = document.getElementById('placeCodOrderButton');
             if (formTitle) formTitle.textContent = 'Cash on Delivery Details:';
-            if (submitButton) submitButton.textContent = 'Place COD Order';
+            if (submitButton) submitButton.textContent = 'Send COD Order to WhatsApp';
             
-            // Remove the order type flag
-            delete codDetailsForm.dataset.orderType;
+
         });
 
 
@@ -941,8 +898,8 @@
             const formTitle = document.querySelector('#codFormContainer h4');
             const submitButton = document.getElementById('placeCodOrderButton');
             if (formTitle) formTitle.textContent = 'Cash on Delivery Details:';
-            if (submitButton) submitButton.textContent = 'Place COD Order';
-            delete codDetailsForm.dataset.orderType; // Remove the flag
+            if (submitButton) submitButton.textContent = 'Send COD Order to WhatsApp';
+
         });
 
         // Initial cart count update
