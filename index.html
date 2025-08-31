@@ -48,21 +48,16 @@
         }
         /* Removed .cart-icon-container as it's no longer fixed */
         .cart-icon-navbar { /* New style for cart icon in navbar */
-            background-color: transparent; /* No background needed in navbar */
-            color: #0d9488; /* Teal color for icon */
             border-radius: 9999px;
-            width: 2.5rem; /* Smaller size for navbar */
-            height: 2.5rem;
+            width: 3rem; /* Slightly larger size for better visibility */
+            height: 3rem;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.25rem; /* Smaller font size */
+            font-size: 1.25rem;
             cursor: pointer;
-            transition: color 0.2s ease;
+            transition: all 0.3s ease;
             position: relative; /* For absolute positioning of count */
-        }
-        .cart-icon-navbar:hover {
-            color: #0f766e; /* Darker teal on hover */
         }
         .modal {
             display: none; /* Hidden by default */
@@ -134,7 +129,7 @@
 <body class="bg-gray-50 text-gray-800">
 
     <!-- Top Info Bar -->
-    <div class="bg-teal-600 text-white py-3">
+    <div class="bg-black text-white py-3">
         <div class="container mx-auto px-4">
             <div class="flex flex-col md:flex-row justify-between items-center space-y-2 md:space-y-0">
                 <div class="flex items-center space-x-6 text-sm">
@@ -163,22 +158,36 @@
     </div>
 
     <!-- Header -->
-    <header class="bg-white shadow-sm py-4 mb-8 sticky top-0 z-40">
+    <header class="bg-white shadow-lg py-6 mb-8 sticky top-0 z-40 border-b border-gray-100">
         <div class="container mx-auto px-4 flex justify-between items-center">
-            <div class="flex items-center space-x-2">
-                <!-- Logo placeholder - you can replace with your actual logo -->
-                <img src="https://placehold.co/40x40/0d9488/ffffff?text=GF" alt="GoodFuel Logo" class="rounded-full">
-                <h1 class="text-3xl font-bold text-gray-900">GoodFuel.<span class="text-teal-600">Life</span></h1>
+            <div class="flex items-center space-x-3">
+                <!-- Enhanced Logo -->
+                <div class="bg-gradient-to-br from-teal-500 to-teal-600 w-12 h-12 rounded-full flex items-center justify-center shadow-lg">
+                    <span class="text-black font-bold text-xl">GF</span>
+                </div>
+                <div class="flex flex-col">
+                    <h1 class="text-3xl font-bold text-gray-900 leading-tight">GoodFuel.<span class="text-transparent bg-clip-text bg-gradient-to-r from-teal-600 to-teal-500">Life</span></h1>
+                    <p class="text-sm text-gray-500 -mt-1">Health On Your Plate</p>
+                </div>
             </div>
-            <nav class="flex items-center space-x-6"> <!-- Ensured flex for alignment -->
-                <a href="#products" class="hidden md:block text-gray-600 hover:text-teal-600 font-medium transition-colors">Products</a>
-                <a href="#about" class="hidden md:block text-gray-600 hover:text-teal-600 font-medium transition-colors">About Us</a>
-                <a href="#contact" class="hidden md:block text-gray-600 hover:text-teal-600 font-medium transition-colors">Contact</a>
+            <nav class="flex items-center space-x-8">
+                <a href="#products" class="hidden md:block text-gray-700 hover:text-teal-600 font-medium transition-all duration-300 hover:scale-105 relative group">
+                    Products
+                    <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-teal-600 transition-all duration-300 group-hover:w-full"></span>
+                </a>
+                <a href="#about" class="hidden md:block text-gray-700 hover:text-teal-600 font-medium transition-all duration-300 hover:scale-105 relative group">
+                    About Us
+                    <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-teal-600 transition-all duration-300 group-hover:w-full"></span>
+                </a>
+                <a href="#contact" class="hidden md:block text-gray-700 hover:text-teal-600 font-medium transition-all duration-300 hover:scale-105 relative group">
+                    Contact
+                    <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-teal-600 transition-all duration-300 group-hover:w-full"></span>
+                </a>
 
-                <!-- Cart Icon now in Navbar -->
-                <div id="cartIcon" class="cart-icon-navbar">
+                <!-- Enhanced Cart Icon -->
+                <div id="cartIcon" class="cart-icon-navbar bg-gradient-to-br from-teal-500 to-teal-600 text-black hover:from-teal-600 hover:to-teal-700 shadow-lg hover:shadow-xl transform hover:scale-110 transition-all duration-300">
                     <i class="fas fa-shopping-cart"></i>
-                    <span id="cartCount" class="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center opacity-0 transform scale-0 transition-all duration-300">0</span>
+                    <span id="cartCount" class="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center opacity-0 transform scale-0 transition-all duration-300 shadow-lg">0</span>
                 </div>
             </nav>
         </div>
