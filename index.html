@@ -358,7 +358,12 @@
                             <span class="text-xl font-bold text-green-600">₹4,200*</span>
                         </div>
                     </div>
-                    <button class="btn-primary w-full py-3 text-lg shadow-md hover:shadow-lg transform hover:-translate-y-1 transition-all duration-300">
+                    <button class="btn-primary w-full py-3 text-lg shadow-md hover:shadow-lg transform hover:-translate-y-1 transition-all duration-300 subscribe-now-btn"
+                            data-plan-name="VEG SALAD BOWL"
+                            data-plan-description="Rich in Protein and Fiber"
+                            data-plan-small-price="1550"
+                            data-plan-medium-price="2600"
+                            data-plan-large-price="4200">
                         Subscribe Now
                     </button>
                 </div>
@@ -384,7 +389,12 @@
                             <span class="text-xl font-bold text-orange-600">₹4,400*</span>
                         </div>
                     </div>
-                    <button class="btn-primary w-full py-3 text-lg shadow-md hover:shadow-lg transform hover:-translate-y-1 transition-all duration-300">
+                    <button class="btn-primary w-full py-3 text-lg shadow-md hover:shadow-lg transform hover:-translate-y-1 transition-all duration-300 subscribe-now-btn"
+                            data-plan-name="VEG SALAD WITH MASALA CURD"
+                            data-plan-description="Rich in Protein and Fiber"
+                            data-plan-small-price="1750"
+                            data-plan-medium-price="2800"
+                            data-plan-large-price="4400">
                         Subscribe Now
                     </button>
                 </div>
@@ -410,7 +420,12 @@
                             <span class="text-xl font-bold text-purple-600">₹3,100*</span>
                         </div>
                     </div>
-                    <button class="btn-primary w-full py-3 text-lg shadow-md hover:shadow-lg transform hover:-translate-y-1 transition-all duration-300">
+                    <button class="btn-primary w-full py-3 text-lg shadow-md hover:shadow-lg transform hover:-translate-y-1 transition-all duration-300 subscribe-now-btn"
+                            data-plan-name="HEALTHY FRUITS DESSERT"
+                            data-plan-description="No Added Sugar & Cream, Sweetened with Dates"
+                            data-plan-small-price="1750"
+                            data-plan-medium-price="2600"
+                            data-plan-large-price="3100">
                         Subscribe Now
                     </button>
                 </div>
@@ -586,6 +601,62 @@
             </div>
         </div>
     </footer>
+
+    <!-- Subscription Modal -->
+    <div id="subscriptionModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" id="closeSubscriptionModalButton">&times;</span>
+            <h3 class="text-3xl font-bold text-gray-900 mb-6 text-center">Subscribe to <span id="subscriptionPlanName">Plan</span></h3>
+            
+            <div class="mb-6 p-4 bg-gray-50 rounded-lg">
+                <div class="text-center">
+                    <h4 class="text-xl font-semibold text-gray-800 mb-2" id="subscriptionPlanTitle">Plan Details</h4>
+                    <p class="text-gray-600" id="subscriptionPlanDescription">Plan description</p>
+                    <div class="mt-4">
+                        <span class="text-2xl font-bold text-teal-600" id="subscriptionPlanPrice">₹0</span>
+                        <span class="text-gray-600 ml-2">for 30 meals over 45 days</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Subscription Form -->
+            <div id="subscriptionFormContainer">
+                <h4 class="text-xl font-semibold text-gray-800 mb-4">Subscription Details (Will be sent to WhatsApp):</h4>
+                <form id="subscriptionDetailsForm" class="space-y-4">
+                    <div>
+                        <label for="subscriptionCustomerName" class="block text-sm font-medium text-gray-700">Name</label>
+                        <input type="text" id="subscriptionCustomerName" name="subscriptionCustomerName" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-teal-500 focus:border-teal-500 sm:text-sm p-2" required>
+                    </div>
+                    <div>
+                        <label for="subscriptionCustomerMobile" class="block text-sm font-medium text-gray-700">Mobile Number</label>
+                        <input type="tel" id="subscriptionCustomerMobile" name="subscriptionCustomerMobile" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-teal-500 focus:border-teal-500 sm:text-sm p-2" pattern="[0-9]{10}" title="Please enter a 10-digit mobile number" required>
+                    </div>
+                    <div>
+                        <label for="subscriptionCustomerAddress" class="block text-sm font-medium text-gray-700">Delivery Address</label>
+                        <textarea id="subscriptionCustomerAddress" name="subscriptionCustomerAddress" rows="3" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-teal-500 focus:border-teal-500 sm:text-sm p-2" required></textarea>
+                    </div>
+                    <div>
+                        <label for="subscriptionCustomerRemark" class="block text-sm font-medium text-gray-700">Special Instructions/Remarks <span class="text-gray-400 text-xs">(Optional)</span></label>
+                        <textarea id="subscriptionCustomerRemark" name="subscriptionCustomerRemark" rows="2" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-teal-500 focus:border-teal-500 sm:text-sm p-2" placeholder="Any special instructions or notes for your subscription..."></textarea>
+                    </div>
+                    <div class="flex space-x-3">
+                        <button type="button" id="backToSubscriptionButton" class="btn-secondary flex-1 py-3 shadow-md hover:shadow-lg">
+                            <i class="fas fa-arrow-left mr-2"></i> Back
+                        </button>
+                        <button type="submit" id="placeSubscriptionOrderButton" class="btn-primary flex-1 py-3 shadow-md hover:shadow-lg">
+                            Send Subscription to WhatsApp
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Message Box for subscription feedback -->
+            <div id="subscriptionMessageBox" class="mt-6 p-4 rounded-lg bg-green-100 text-green-800 text-center hidden">
+                <p class="font-semibold text-lg">Your subscription request has been sent!</p>
+                <p class="text-sm">We'll contact you shortly to confirm your subscription.</p>
+            </div>
+        </div>
+    </div>
 
     <!-- Checkout Modal -->
     <div id="checkoutModal" class="modal">
@@ -1208,6 +1279,149 @@
 
         // Initial cart count update
         updateCartCount();
+
+        // ========================================
+        // SUBSCRIPTION MODAL FUNCTIONALITY
+        // ========================================
+        
+        // Subscription modal elements
+        const subscriptionModal = document.getElementById('subscriptionModal');
+        const closeSubscriptionModalButton = document.getElementById('closeSubscriptionModalButton');
+        const subscriptionDetailsForm = document.getElementById('subscriptionDetailsForm');
+        const subscriptionMessageBox = document.getElementById('subscriptionMessageBox');
+        const backToSubscriptionButton = document.getElementById('backToSubscriptionButton');
+        
+        // Store current subscription plan data
+        let currentSubscriptionPlan = null;
+
+        // Subscribe Now button event listeners
+        document.querySelectorAll('.subscribe-now-btn').forEach(button => {
+            button.addEventListener('click', (event) => {
+                const planName = event.target.dataset.planName;
+                const planDescription = event.target.dataset.planDescription;
+                const smallPrice = event.target.dataset.planSmallPrice;
+                const mediumPrice = event.target.dataset.planMediumPrice;
+                const largePrice = event.target.dataset.planLargePrice;
+                
+                // Store current plan data
+                currentSubscriptionPlan = {
+                    name: planName,
+                    description: planDescription,
+                    smallPrice: smallPrice,
+                    mediumPrice: mediumPrice,
+                    largePrice: largePrice
+                };
+                
+                // Update modal content
+                document.getElementById('subscriptionPlanName').textContent = planName;
+                document.getElementById('subscriptionPlanTitle').textContent = planName;
+                document.getElementById('subscriptionPlanDescription').textContent = planDescription;
+                
+                // Show pricing options
+                const priceElement = document.getElementById('subscriptionPlanPrice');
+                priceElement.innerHTML = `
+                    <div class="space-y-2">
+                        <div>Small: ₹${parseInt(smallPrice).toLocaleString()}</div>
+                        <div>Medium: ₹${parseInt(mediumPrice).toLocaleString()}</div>
+                        <div>Large: ₹${parseInt(largePrice).toLocaleString()}</div>
+                    </div>
+                `;
+                
+                // Show modal
+                subscriptionModal.style.display = 'flex';
+                subscriptionMessageBox.classList.add('hidden');
+                subscriptionDetailsForm.reset();
+            });
+        });
+
+        // Close subscription modal
+        closeSubscriptionModalButton.addEventListener('click', () => {
+            subscriptionModal.style.display = 'none';
+        });
+
+        window.addEventListener('click', (event) => {
+            if (event.target == subscriptionModal) {
+                subscriptionModal.style.display = 'none';
+            }
+        });
+
+        // Back to subscription button (currently just closes modal)
+        backToSubscriptionButton.addEventListener('click', () => {
+            subscriptionModal.style.display = 'none';
+        });
+
+        // Subscription form submission
+        subscriptionDetailsForm.addEventListener('submit', (event) => {
+            event.preventDefault();
+
+            const customerName = document.getElementById('subscriptionCustomerName').value;
+            const customerMobile = document.getElementById('subscriptionCustomerMobile').value;
+            const customerAddress = document.getElementById('subscriptionCustomerAddress').value;
+            const customerRemark = document.getElementById('subscriptionCustomerRemark').value;
+            
+            if (!customerName || !customerMobile || !customerAddress) {
+                subscriptionMessageBox.innerHTML = '<p class="font-semibold text-red-700">Please fill in all required customer details.</p>';
+                subscriptionMessageBox.classList.remove('hidden');
+                subscriptionMessageBox.classList.remove('bg-green-100', 'text-green-800');
+                subscriptionMessageBox.classList.add('bg-red-100', 'text-red-700');
+                return;
+            }
+
+            const whatsappNumber = "8527594368";
+            
+            // Send subscription to WhatsApp
+            sendSubscriptionToWhatsApp();
+            
+            function sendSubscriptionToWhatsApp() {
+                let subscriptionDetails = "Hello, I'd like to subscribe to your monthly meal plan!\n\n";
+
+                subscriptionDetails += `*Customer Details:*\n`;
+                subscriptionDetails += `Name: ${customerName}\n`;
+                subscriptionDetails += `Mobile: ${customerMobile}\n`;
+                subscriptionDetails += `Address: ${customerAddress}\n`;
+                if (customerRemark && customerRemark.trim()) {
+                    subscriptionDetails += `Special Instructions: ${customerRemark}\n`;
+                }
+                subscriptionDetails += `\n`;
+
+                subscriptionDetails += `*Subscription Plan Details:*\n`;
+                subscriptionDetails += `Plan: ${currentSubscriptionPlan.name}\n`;
+                subscriptionDetails += `Description: ${currentSubscriptionPlan.description}\n`;
+                subscriptionDetails += `\n`;
+                subscriptionDetails += `*Pricing Options:*\n`;
+                subscriptionDetails += `Small: ₹${parseInt(currentSubscriptionPlan.smallPrice).toLocaleString()}*\n`;
+                subscriptionDetails += `Medium: ₹${parseInt(currentSubscriptionPlan.mediumPrice).toLocaleString()}*\n`;
+                subscriptionDetails += `Large: ₹${parseInt(currentSubscriptionPlan.largePrice).toLocaleString()}*\n`;
+                subscriptionDetails += `\n`;
+                subscriptionDetails += `*Subscription Terms:*\n`;
+                subscriptionDetails += `• 30 meals over 45 days\n`;
+                subscriptionDetails += `• Flexible delivery schedule\n`;
+                subscriptionDetails += `• Please specify your preferred size\n`;
+                subscriptionDetails += `• Delivery charges: ₹10 per kilometer\n`;
+                subscriptionDetails += `\n`;
+                subscriptionDetails += `Please confirm the subscription and let me know which size you prefer. Thank you!`;
+
+                console.log("WhatsApp subscription message content before encoding:", subscriptionDetails);
+
+                const encodedMessage = encodeURIComponent(subscriptionDetails);
+                
+                // Open WhatsApp with the subscription details
+                window.open(`https://wa.me/${whatsappNumber}?text=${encodedMessage}`, '_blank');
+
+                // Show success message
+                subscriptionMessageBox.innerHTML = `
+                    <p class="font-semibold text-lg">Your subscription request has been sent via WhatsApp!</p>
+                    <p class="text-sm">We'll contact you shortly to confirm your subscription and preferred size.</p>
+                `;
+                subscriptionMessageBox.classList.remove('hidden');
+                subscriptionMessageBox.classList.remove('bg-red-100', 'text-red-700');
+                subscriptionMessageBox.classList.add('bg-green-100', 'text-green-800');
+
+                // Reset form
+                subscriptionDetailsForm.reset();
+                currentSubscriptionPlan = null;
+            }
+        });
 
     </script>
 </body>
