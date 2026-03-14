@@ -1187,7 +1187,7 @@
                 // Ensure form title and button text are correct for COD
                 const formTitle = document.querySelector('#codFormContainer h4');
                 const submitButton = document.getElementById('placeCodOrderButton');
-                if (formTitle) formTitle.textContent = 'Cash on Delivery Details:';
+                if (formTitle) formTitle.textContent = 'Cash on Delivery Details (Will be sent to WhatsApp):';
                 if (submitButton) submitButton.textContent = 'Send COD Order to WhatsApp';
                 
                 // Remove any order type flag
@@ -1196,18 +1196,6 @@
         });
 
 
-
-        // Back to Options Button Logic
-        backToOptionsButton.addEventListener('click', () => {
-            checkoutOptions.classList.remove('hidden'); // Show initial options
-            codFormContainer.classList.add('hidden'); // Hide COD form
-            messageBox.classList.add('hidden'); // Hide any previous message
-            // Reset form title and button to default
-            const formTitle = document.querySelector('#codFormContainer h4');
-            const submitButton = document.getElementById('placeCodOrderButton');
-            if (formTitle) formTitle.textContent = 'Cash on Delivery Details:';
-            if (submitButton) submitButton.textContent = 'Send COD Order to WhatsApp';
-        });
 
         // Place COD Order Button (from the form) Logic
         codDetailsForm.addEventListener('submit', (event) => {
@@ -1253,14 +1241,20 @@
                 cart.forEach(item => { subtotal += item.price * item.quantity; });
                 const total = subtotal + deliveryCharge;
 
-                // Store order details for use after payment confirmation
+                // Snapshot cart, delivery, and total so the WhatsApp message
+                // always matches the amount the customer paid, even if the cart
+                // or delivery details change while the confirmation screen is shown.
                 pendingOnlineOrder = {
                     customerName,
                     customerMobile,
                     customerAddress,
                     customerRemark,
                     locationLink: userLocationLink,
-                    whatsappNumber
+                    whatsappNumber,
+                    cartSnapshot: cart.map(item => ({ ...item })),
+                    deliveryCharge,
+                    deliveryDistance,
+                    total
                 };
 
                 // Pre-fill amount on the Razorpay Me link (amount in paise)
@@ -1338,7 +1332,7 @@
                 // Reset form title and button text
                 const formTitle = document.querySelector('#codFormContainer h4');
                 const submitButton = document.getElementById('placeCodOrderButton');
-                if (formTitle) formTitle.textContent = 'Cash on Delivery Details:';
+                if (formTitle) formTitle.textContent = 'Cash on Delivery Details (Will be sent to WhatsApp):';
                 if (submitButton) submitButton.textContent = 'Send COD Order to WhatsApp';
             }
         });
@@ -1353,7 +1347,7 @@
             // Reset form title and button to default
             const formTitle = document.querySelector('#codFormContainer h4');
             const submitButton = document.getElementById('placeCodOrderButton');
-            if (formTitle) formTitle.textContent = 'Cash on Delivery Details:';
+            if (formTitle) formTitle.textContent = 'Cash on Delivery Details (Will be sent to WhatsApp):';
             if (submitButton) submitButton.textContent = 'Send COD Order to WhatsApp';
         });
 
@@ -1368,7 +1362,9 @@
         confirmPaymentButton.addEventListener('click', () => {
             if (!pendingOnlineOrder) return;
 
-            const { customerName, customerMobile, customerAddress, customerRemark, locationLink, whatsappNumber } = pendingOnlineOrder;
+            const { customerName, customerMobile, customerAddress, customerRemark, locationLink, whatsappNumber,
+                    cartSnapshot, deliveryCharge: snapshotDeliveryCharge, deliveryDistance: snapshotDeliveryDistance,
+                    total: snapshotTotal } = pendingOnlineOrder;
 
             let orderDetails = "Hello, I've completed the online payment and would like to place an order!\n\n";
             orderDetails += `*Payment Method:* Online Payment (Razorpay)\n\n`;
@@ -1384,13 +1380,13 @@
 
             orderDetails += `*Order Details:*\n`;
             let subtotal = 0;
-            cart.forEach(item => {
+            cartSnapshot.forEach(item => {
                 orderDetails += `${item.quantity} x ${item.name} (${item.size}) - ₹${item.price * item.quantity}\n`;
                 subtotal += item.price * item.quantity;
             });
             orderDetails += `Subtotal: ₹${subtotal.toFixed(0)}\n`;
-            orderDetails += `Delivery Charge: ₹${deliveryCharge} (${deliveryDistance.toFixed(1)}km)\n`;
-            orderDetails += `Total: ₹${(subtotal + deliveryCharge).toFixed(0)}`;
+            orderDetails += `Delivery Charge: ₹${snapshotDeliveryCharge} (${snapshotDeliveryDistance.toFixed(1)}km)\n`;
+            orderDetails += `Total: ₹${snapshotTotal.toFixed(0)}`;
 
             const encodedMessage = encodeURIComponent(orderDetails);
             window.open(`https://wa.me/${whatsappNumber}?text=${encodedMessage}`, '_blank');
@@ -1425,7 +1421,7 @@
 
             const formTitle = document.querySelector('#codFormContainer h4');
             const submitButton = document.getElementById('placeCodOrderButton');
-            if (formTitle) formTitle.textContent = 'Cash on Delivery Details:';
+            if (formTitle) formTitle.textContent = 'Cash on Delivery Details (Will be sent to WhatsApp):';
             if (submitButton) submitButton.textContent = 'Send COD Order to WhatsApp';
         });
 
