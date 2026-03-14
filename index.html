@@ -1132,6 +1132,7 @@
             codFormContainer.classList.add('hidden'); // Ensure COD form is hidden
             paymentConfirmContainer.classList.add('hidden'); // Ensure payment confirmation is hidden
             pendingOnlineOrder = null;
+            delete codDetailsForm.dataset.orderType;
             codDetailsForm.reset(); // Clear form fields
         });
 
@@ -1330,6 +1331,7 @@
                 updateCartCount();
                 renderCartItems(); // Re-render to show empty cart
                 codDetailsForm.reset(); // Clear form fields
+                delete codDetailsForm.dataset.orderType; // Clear order type flag
                 checkoutOptions.classList.remove('hidden'); // Show initial options again
                 codFormContainer.classList.add('hidden'); // Hide COD form
                 
@@ -1347,12 +1349,12 @@
             checkoutOptions.classList.remove('hidden'); // Show initial options
             codFormContainer.classList.add('hidden'); // Hide COD form
             messageBox.classList.add('hidden'); // Hide any previous message
+            delete codDetailsForm.dataset.orderType; // Clear order type flag
             // Reset form title and button to default
             const formTitle = document.querySelector('#codFormContainer h4');
             const submitButton = document.getElementById('placeCodOrderButton');
             if (formTitle) formTitle.textContent = 'Cash on Delivery Details:';
             if (submitButton) submitButton.textContent = 'Send COD Order to WhatsApp';
-
         });
 
         // Back from Payment Confirmation Logic
@@ -1417,6 +1419,7 @@
             updateCartCount();
             renderCartItems();
             codDetailsForm.reset();
+            delete codDetailsForm.dataset.orderType; // Clear order type flag
             paymentConfirmContainer.classList.add('hidden');
             checkoutOptions.classList.remove('hidden');
 
