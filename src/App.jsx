@@ -125,6 +125,7 @@ function App() {
   const [message, setMessage] = useState(null)
   const [subscriptionMessage, setSubscriptionMessage] = useState(null)
   const [showCodForm, setShowCodForm] = useState(false)
+  const [recentlyAdded, setRecentlyAdded] = useState({})
 
   const cartCount = useMemo(
     () => cart.reduce((total, item) => total + item.quantity, 0),
@@ -168,6 +169,11 @@ function App() {
         },
       ]
     })
+
+    setRecentlyAdded((prev) => ({ ...prev, [product.id]: true }))
+    setTimeout(() => {
+      setRecentlyAdded((prev) => ({ ...prev, [product.id]: false }))
+    }, 1000)
   }
 
   const updateQuantity = (index, change) => {
@@ -582,7 +588,7 @@ function App() {
                   className="btn-primary w-full"
                   onClick={() => handleAddToCart(product)}
                 >
-                  Add to Cart
+                  {recentlyAdded[product.id] ? 'Added!' : 'Add to Cart'}
                 </button>
               </div>
             ))}
@@ -804,7 +810,14 @@ function App() {
       </footer>
 
       {isCheckoutOpen && (
-        <div className="modal flex">
+        <div
+          className="modal flex"
+          onClick={(event) => {
+            if (event.target === event.currentTarget) {
+              setIsCheckoutOpen(false)
+            }
+          }}
+        >
           <div className="modal-content">
             <button type="button" className="close-button" onClick={() => setIsCheckoutOpen(false)}>
               &times;
@@ -876,6 +889,12 @@ function App() {
               </div>
               <div className="mt-2 text-sm text-gray-600">{distanceInfo}</div>
               {distanceError && <div className="mt-2 text-sm text-red-600">{distanceError}</div>}
+              {isGettingLocation && (
+                <div className="mt-2 text-sm text-blue-600">
+                  <i className="fas fa-spinner fa-spin mr-1" />
+                  Getting your location...
+                </div>
+              )}
             </div>
 
             <div className="flex justify-between items-center mb-4 pb-2 border-b border-gray-200">
@@ -1004,7 +1023,14 @@ function App() {
       )}
 
       {isSubscriptionOpen && (
-        <div className="modal flex">
+        <div
+          className="modal flex"
+          onClick={(event) => {
+            if (event.target === event.currentTarget) {
+              setIsSubscriptionOpen(false)
+            }
+          }}
+        >
           <div className="modal-content">
             <button
               type="button"
