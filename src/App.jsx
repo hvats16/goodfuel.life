@@ -64,6 +64,7 @@ const subscriptionPlans = [
 const SHOP_LOCATION = { lat: 28.58517294897767, lng: 77.07168929283343 }
 const MAX_DELIVERY_DISTANCE = 12
 const WHATSAPP_NUMBER = '8527594368'
+const ADDED_FEEDBACK_DURATION_MS = 1000
 
 const formatCurrency = (value) => `₹${Number(value).toLocaleString()}`
 
@@ -183,7 +184,7 @@ function App() {
         return updated
       })
       delete addTimeoutsRef.current[product.id]
-    }, 1000)
+    }, ADDED_FEEDBACK_DURATION_MS)
   }
 
   useEffect(
