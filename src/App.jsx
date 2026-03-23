@@ -190,7 +190,6 @@ function App() {
   useEffect(
     () => () => {
       Object.values(addTimeoutsRef.current).forEach((timeoutId) => clearTimeout(timeoutId))
-      setRecentlyAdded({})
     },
     [],
   )
