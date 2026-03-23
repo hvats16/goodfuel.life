@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import './App.css'
 
 const products = [
@@ -126,6 +126,7 @@ function App() {
   const [subscriptionMessage, setSubscriptionMessage] = useState(null)
   const [showCodForm, setShowCodForm] = useState(false)
   const [recentlyAdded, setRecentlyAdded] = useState({})
+  const addTimeoutsRef = useRef({})
 
   const cartCount = useMemo(
     () => cart.reduce((total, item) => total + item.quantity, 0),
@@ -170,11 +171,27 @@ function App() {
       ]
     })
 
+    if (addTimeoutsRef.current[product.id]) {
+      clearTimeout(addTimeoutsRef.current[product.id])
+    }
+
     setRecentlyAdded((prev) => ({ ...prev, [product.id]: true }))
-    setTimeout(() => {
-      setRecentlyAdded((prev) => ({ ...prev, [product.id]: false }))
+    addTimeoutsRef.current[product.id] = setTimeout(() => {
+      setRecentlyAdded((prev) => {
+        const updated = { ...prev }
+        delete updated[product.id]
+        return updated
+      })
+      delete addTimeoutsRef.current[product.id]
     }, 1000)
   }
+
+  useEffect(
+    () => () => {
+      Object.values(addTimeoutsRef.current).forEach((timeoutId) => clearTimeout(timeoutId))
+    },
+    [],
+  )
 
   const updateQuantity = (index, change) => {
     setCart((prev) => {
