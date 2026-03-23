@@ -189,7 +189,7 @@ function App() {
         delete updated[product.id]
         return updated
       })
-      delete addToCartTimeoutsRef.current[product.id]
+      clearProductTimeout(product.id)
     }, ADDED_FEEDBACK_DURATION_MS)
   }
 
