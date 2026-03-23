@@ -129,6 +129,14 @@ function App() {
   const [recentlyAdded, setRecentlyAdded] = useState({})
   const addToCartTimeoutsRef = useRef({})
 
+  const clearProductTimeout = (productId) => {
+    const timeoutId = addToCartTimeoutsRef.current[productId]
+    if (timeoutId) {
+      clearTimeout(timeoutId)
+      delete addToCartTimeoutsRef.current[productId]
+    }
+  }
+
   const cartCount = useMemo(
     () => cart.reduce((total, item) => total + item.quantity, 0),
     [cart],
@@ -172,9 +180,7 @@ function App() {
       ]
     })
 
-    if (addToCartTimeoutsRef.current[product.id]) {
-      clearTimeout(addToCartTimeoutsRef.current[product.id])
-    }
+    clearProductTimeout(product.id)
 
     setRecentlyAdded((prev) => ({ ...prev, [product.id]: true }))
     addToCartTimeoutsRef.current[product.id] = setTimeout(() => {
@@ -187,12 +193,13 @@ function App() {
     }, ADDED_FEEDBACK_DURATION_MS)
   }
 
-  useEffect(
-    () => () => {
+  useEffect(() => {
+    return () => {
+      // Clear any pending add-to-cart feedback timers on unmount
       Object.values(addToCartTimeoutsRef.current).forEach((timeoutId) => clearTimeout(timeoutId))
-    },
-    [],
-  )
+      addToCartTimeoutsRef.current = {}
+    }
+  }, [])
 
   const updateQuantity = (index, change) => {
     setCart((prev) => {
