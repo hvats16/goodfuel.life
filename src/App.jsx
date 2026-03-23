@@ -127,7 +127,7 @@ function App() {
   const [subscriptionMessage, setSubscriptionMessage] = useState(null)
   const [showCodForm, setShowCodForm] = useState(false)
   const [recentlyAdded, setRecentlyAdded] = useState({})
-  const addTimeoutsRef = useRef({})
+  const addToCartTimeoutsRef = useRef({})
 
   const cartCount = useMemo(
     () => cart.reduce((total, item) => total + item.quantity, 0),
@@ -172,24 +172,24 @@ function App() {
       ]
     })
 
-    if (addTimeoutsRef.current[product.id]) {
-      clearTimeout(addTimeoutsRef.current[product.id])
+    if (addToCartTimeoutsRef.current[product.id]) {
+      clearTimeout(addToCartTimeoutsRef.current[product.id])
     }
 
     setRecentlyAdded((prev) => ({ ...prev, [product.id]: true }))
-    addTimeoutsRef.current[product.id] = setTimeout(() => {
+    addToCartTimeoutsRef.current[product.id] = setTimeout(() => {
       setRecentlyAdded((prev) => {
         const updated = { ...prev }
         delete updated[product.id]
         return updated
       })
-      delete addTimeoutsRef.current[product.id]
+      delete addToCartTimeoutsRef.current[product.id]
     }, ADDED_FEEDBACK_DURATION_MS)
   }
 
   useEffect(
     () => () => {
-      Object.values(addTimeoutsRef.current).forEach((timeoutId) => clearTimeout(timeoutId))
+      Object.values(addToCartTimeoutsRef.current).forEach((timeoutId) => clearTimeout(timeoutId))
     },
     [],
   )
