@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import './App.css'
 
 const products = [
@@ -64,6 +64,7 @@ const subscriptionPlans = [
 const SHOP_LOCATION = { lat: 28.58517294897767, lng: 77.07168929283343 }
 const MAX_DELIVERY_DISTANCE = 12
 const WHATSAPP_NUMBER = '8527594368'
+const ADDED_FEEDBACK_DURATION_MS = 1000
 
 const formatCurrency = (value) => `₹${Number(value).toLocaleString()}`
 
@@ -125,6 +126,16 @@ function App() {
   const [message, setMessage] = useState(null)
   const [subscriptionMessage, setSubscriptionMessage] = useState(null)
   const [showCodForm, setShowCodForm] = useState(false)
+  const [recentlyAdded, setRecentlyAdded] = useState({})
+  const addToCartTimeoutsRef = useRef({})
+
+  const clearProductTimeout = (productId) => {
+    const timeoutId = addToCartTimeoutsRef.current[productId]
+    if (timeoutId) {
+      clearTimeout(timeoutId)
+      delete addToCartTimeoutsRef.current[productId]
+    }
+  }
 
   const cartCount = useMemo(
     () => cart.reduce((total, item) => total + item.quantity, 0),
@@ -168,7 +179,27 @@ function App() {
         },
       ]
     })
+
+    clearProductTimeout(product.id)
+
+    setRecentlyAdded((prev) => ({ ...prev, [product.id]: true }))
+    addToCartTimeoutsRef.current[product.id] = setTimeout(() => {
+      setRecentlyAdded((prev) => {
+        const updated = { ...prev }
+        delete updated[product.id]
+        return updated
+      })
+      clearProductTimeout(product.id)
+    }, ADDED_FEEDBACK_DURATION_MS)
   }
+
+  useEffect(() => {
+    return () => {
+      // Clear any pending add-to-cart feedback timers on unmount
+      Object.values(addToCartTimeoutsRef.current).forEach((timeoutId) => clearTimeout(timeoutId))
+      addToCartTimeoutsRef.current = {}
+    }
+  }, [])
 
   const updateQuantity = (index, change) => {
     setCart((prev) => {
@@ -582,7 +613,7 @@ function App() {
                   className="btn-primary w-full"
                   onClick={() => handleAddToCart(product)}
                 >
-                  Add to Cart
+                  {recentlyAdded[product.id] ? 'Added!' : 'Add to Cart'}
                 </button>
               </div>
             ))}
@@ -804,7 +835,14 @@ function App() {
       </footer>
 
       {isCheckoutOpen && (
-        <div className="modal flex">
+        <div
+          className="modal flex"
+          onClick={(event) => {
+            if (event.target === event.currentTarget) {
+              setIsCheckoutOpen(false)
+            }
+          }}
+        >
           <div className="modal-content">
             <button type="button" className="close-button" onClick={() => setIsCheckoutOpen(false)}>
               &times;
@@ -876,6 +914,12 @@ function App() {
               </div>
               <div className="mt-2 text-sm text-gray-600">{distanceInfo}</div>
               {distanceError && <div className="mt-2 text-sm text-red-600">{distanceError}</div>}
+              {isGettingLocation && (
+                <div className="mt-2 text-sm text-blue-600">
+                  <i className="fas fa-spinner fa-spin mr-1" />
+                  Getting your location...
+                </div>
+              )}
             </div>
 
             <div className="flex justify-between items-center mb-4 pb-2 border-b border-gray-200">
@@ -1004,7 +1048,14 @@ function App() {
       )}
 
       {isSubscriptionOpen && (
-        <div className="modal flex">
+        <div
+          className="modal flex"
+          onClick={(event) => {
+            if (event.target === event.currentTarget) {
+              setIsSubscriptionOpen(false)
+            }
+          }}
+        >
           <div className="modal-content">
             <button
               type="button"
