@@ -118,6 +118,85 @@
             border-top-right-radius: 1.5rem;
         }
 
+        /* Add-on (Tofu/Paneer) dropdowns */
+        .addon-label {
+            display: flex;
+            align-items: center;
+            gap: 0.375rem;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: #0f766e;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            margin-bottom: 0.375rem;
+        }
+        .addon-dropdown {
+            position: relative;
+        }
+        .addon-select-btn {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border: 1.5px solid #99f6e4;
+            border-radius: 9999px;
+            padding: 0.55rem 1.1rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: #0f766e;
+            background-color: #f0fdfa;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .addon-select-btn:hover {
+            background-color: #ccfbf1;
+            border-color: #5eead4;
+        }
+        .addon-select-btn.open {
+            border-color: #0d9488;
+            box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.15);
+        }
+        .addon-chevron {
+            font-size: 0.7rem;
+            color: #0d9488;
+            transition: transform 0.2s ease;
+        }
+        .addon-select-btn.open .addon-chevron {
+            transform: rotate(180deg);
+        }
+        .addon-menu {
+            position: absolute;
+            top: calc(100% + 0.5rem);
+            left: 0;
+            right: 0;
+            background: #ffffff;
+            border: 1px solid #99f6e4;
+            border-radius: 1rem;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.15), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            z-index: 30;
+            list-style: none;
+            margin: 0;
+            padding: 0.35rem;
+        }
+        .addon-menu.hidden {
+            display: none;
+        }
+        .addon-option {
+            padding: 0.5rem 0.75rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #374151;
+            border-radius: 0.65rem;
+            cursor: pointer;
+            transition: background-color 0.15s ease;
+        }
+        .addon-option:hover,
+        .addon-option.active {
+            background-color: #f0fdfa;
+            color: #0f766e;
+        }
+
         @media (max-width: 768px) {
             .modal-content {
                 max-width: 95%;
@@ -241,28 +320,54 @@
                 <h3 class="text-4xl font-bold text-gray-900 mb-4">Our Delicious Offerings</h3>
                 <p class="text-lg text-gray-600 max-w-2xl mx-auto">Fresh, healthy meals crafted with care and delivered to your doorstep</p>
             </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 items-stretch">
 
                 <!-- Product Card 1: VEG SALAD BOWL [LEMON] -->
-                <div class="product-card p-6 shadow-md flex flex-col items-center text-center">
+                <div class="product-card p-6 shadow-md flex flex-col items-center text-center h-full">
                     <img src="salad1.jpg" alt="VEG SALAD BOWL [LEMON]" class="product-image mb-4">
                     <h4 class="text-2xl font-bold text-gray-900 mb-2">VEG SALAD BOWL [LEMON]</h4>
                     <p class="text-gray-600 mb-4">Rich in Protein and Fiber.</p>
-                    <div class="flex flex-col space-y-3 w-full mb-6">
+                    <div class="flex flex-col space-y-3 w-full mb-4">
                         <label class="flex items-center space-x-2 text-gray-700">
-                            <input type="radio" name="VEGSALADBOWLLLEMONSize" value="small" data-price="59" class="form-radio text-teal-600" checked>
-                            <span>Small - ₹59</span>
+                            <input type="radio" name="VEGSALADBOWLLLEMONSize" value="small" data-price="69" class="form-radio text-teal-600" checked>
+                            <span>Small - ₹69</span>
                         </label>
                         <label class="flex items-center space-x-2 text-gray-700">
-                            <input type="radio" name="VEGSALADBOWLLLEMONSize" value="medium" data-price="99" class="form-radio text-teal-600">
-                            <span>Medium - ₹99</span>
+                            <input type="radio" name="VEGSALADBOWLLLEMONSize" value="medium" data-price="109" class="form-radio text-teal-600">
+                            <span>Medium - ₹109</span>
                         </label>
                         <label class="flex items-center space-x-2 text-gray-700">
-                            <input type="radio" name="VEGSALADBOWLLLEMONSize" value="large" data-price="159" class="form-radio text-teal-600">
-                            <span>Large - ₹159</span>
+                            <input type="radio" name="VEGSALADBOWLLLEMONSize" value="large" data-price="169" class="form-radio text-teal-600">
+                            <span>Large - ₹169</span>
                         </label>
                     </div>
-                    <button class="btn-primary w-full add-to-cart-btn"
+                    <div class="w-full mb-3 text-left addon-dropdown" data-addon-group="tofu" data-selected-value="None" data-selected-price="0">
+                        <label class="addon-label"><i class="fas fa-seedling"></i> Add Tofu</label>
+                        <button type="button" class="addon-select-btn">
+                            <span class="addon-select-value">None</span>
+                            <i class="fas fa-chevron-down addon-chevron"></i>
+                        </button>
+                        <ul class="addon-menu hidden">
+                            <li class="addon-option active" data-value="None" data-price="0">None</li>
+                            <li class="addon-option" data-value="Tofu 50g" data-price="30">50g - ₹30</li>
+                            <li class="addon-option" data-value="Tofu 100g" data-price="50">100g - ₹50</li>
+                            <li class="addon-option" data-value="Tofu 200g" data-price="100">200g - ₹100</li>
+                        </ul>
+                    </div>
+                    <div class="w-full mb-6 text-left addon-dropdown" data-addon-group="paneer" data-selected-value="None" data-selected-price="0">
+                        <label class="addon-label"><i class="fas fa-cheese"></i> Add Paneer</label>
+                        <button type="button" class="addon-select-btn">
+                            <span class="addon-select-value">None</span>
+                            <i class="fas fa-chevron-down addon-chevron"></i>
+                        </button>
+                        <ul class="addon-menu hidden">
+                            <li class="addon-option active" data-value="None" data-price="0">None</li>
+                            <li class="addon-option" data-value="Paneer 50g" data-price="50">50g - ₹50</li>
+                            <li class="addon-option" data-value="Paneer 100g" data-price="90">100g - ₹90</li>
+                            <li class="addon-option" data-value="Paneer 200g" data-price="160">200g - ₹160</li>
+                        </ul>
+                    </div>
+                    <button class="btn-primary w-full add-to-cart-btn mt-auto"
                             data-product-id="1"
                             data-product-name="VEG SALAD BOWL [LEMON]"
                             data-radio-group-name="VEGSALADBOWLLLEMONSize"> <!-- Added data-radio-group-name -->
@@ -271,25 +376,51 @@
                 </div>
 
                 <!-- Product Card 2: VEG SALAD WITH MASALA CURD -->
-                <div class="product-card p-6 shadow-md flex flex-col items-center text-center">
+                <div class="product-card p-6 shadow-md flex flex-col items-center text-center h-full">
                     <img src="salad.jpg" alt="VEG SALAD WITH MASALA CURD" class="product-image mb-4">
                     <h4 class="text-2xl font-bold text-gray-900 mb-2">VEG SALAD WITH MASALA CURD</h4>
                     <p class="text-gray-600 mb-4">Rich in Protein And Fiber.</p>
-                    <div class="flex flex-col space-y-3 w-full mb-6">
+                    <div class="flex flex-col space-y-3 w-full mb-4">
                         <label class="flex items-center space-x-2 text-gray-700">
-                            <input type="radio" name="VEGSALADWITHMASALACURDSize" value="small" data-price="69" class="form-radio text-teal-600" checked>
-                            <span>Small - ₹69</span>
+                            <input type="radio" name="VEGSALADWITHMASALACURDSize" value="small" data-price="79" class="form-radio text-teal-600" checked>
+                            <span>Small - ₹79</span>
                         </label>
                         <label class="flex items-center space-x-2 text-gray-700">
-                            <input type="radio" name="VEGSALADWITHMASALACURDSize" value="medium" data-price="109" class="form-radio text-teal-600">
-                            <span>Medium - ₹109</span>
+                            <input type="radio" name="VEGSALADWITHMASALACURDSize" value="medium" data-price="119" class="form-radio text-teal-600">
+                            <span>Medium - ₹119</span>
                         </label>
                         <label class="flex items-center space-x-2 text-gray-700">
-                            <input type="radio" name="VEGSALADWITHMASALACURDSize" value="large" data-price="169" class="form-radio text-teal-600">
-                            <span>Large - ₹169</span>
+                            <input type="radio" name="VEGSALADWITHMASALACURDSize" value="large" data-price="179" class="form-radio text-teal-600">
+                            <span>Large - ₹179</span>
                         </label>
                     </div>
-                    <button class="btn-primary w-full add-to-cart-btn"
+                    <div class="w-full mb-3 text-left addon-dropdown" data-addon-group="tofu" data-selected-value="None" data-selected-price="0">
+                        <label class="addon-label"><i class="fas fa-seedling"></i> Add Tofu</label>
+                        <button type="button" class="addon-select-btn">
+                            <span class="addon-select-value">None</span>
+                            <i class="fas fa-chevron-down addon-chevron"></i>
+                        </button>
+                        <ul class="addon-menu hidden">
+                            <li class="addon-option active" data-value="None" data-price="0">None</li>
+                            <li class="addon-option" data-value="Tofu 50g" data-price="30">50g - ₹30</li>
+                            <li class="addon-option" data-value="Tofu 100g" data-price="50">100g - ₹50</li>
+                            <li class="addon-option" data-value="Tofu 200g" data-price="100">200g - ₹100</li>
+                        </ul>
+                    </div>
+                    <div class="w-full mb-6 text-left addon-dropdown" data-addon-group="paneer" data-selected-value="None" data-selected-price="0">
+                        <label class="addon-label"><i class="fas fa-cheese"></i> Add Paneer</label>
+                        <button type="button" class="addon-select-btn">
+                            <span class="addon-select-value">None</span>
+                            <i class="fas fa-chevron-down addon-chevron"></i>
+                        </button>
+                        <ul class="addon-menu hidden">
+                            <li class="addon-option active" data-value="None" data-price="0">None</li>
+                            <li class="addon-option" data-value="Paneer 50g" data-price="50">50g - ₹50</li>
+                            <li class="addon-option" data-value="Paneer 100g" data-price="90">100g - ₹90</li>
+                            <li class="addon-option" data-value="Paneer 200g" data-price="160">200g - ₹160</li>
+                        </ul>
+                    </div>
+                    <button class="btn-primary w-full add-to-cart-btn mt-auto"
                             data-product-id="2"
                             data-product-name="VEG SALAD WITH MASALA CURD"
                             data-radio-group-name="VEGSALADWITHMASALACURDSize"> <!-- Added data-radio-group-name -->
@@ -298,25 +429,25 @@
                 </div>
 
                 <!-- Product Card 3: HEALTHY FRUITS DESSERT -->
-                <div class="product-card p-6 shadow-md flex flex-col items-center text-center">
+                <div class="product-card p-6 shadow-md flex flex-col items-center text-center h-full">
                     <img src="pie.jpg" alt="HEALTHY FRUITS DESSERT" class="product-image mb-4">
                     <h4 class="text-2xl font-bold text-gray-900 mb-2">HEALTHY FRUITS DESSERT</h4>
                     <p class="text-gray-600 mb-4">No Added Sugar & Cream, Sweetened with Dates.</p>
                     <div class="flex flex-col space-y-3 w-full mb-6">
                         <label class="flex items-center space-x-2 text-gray-700">
-                            <input type="radio" name="HEALTHYFRUITSDESSERTSize" value="small" data-price="69" class="form-radio text-teal-600" checked>
-                            <span>Small - ₹69</span>
+                            <input type="radio" name="HEALTHYFRUITSDESSERTSize" value="small" data-price="79" class="form-radio text-teal-600" checked>
+                            <span>Small - ₹79</span>
                         </label>
                         <label class="flex items-center space-x-2 text-gray-700">
-                            <input type="radio" name="HEALTHYFRUITSDESSERTSize" value="medium" data-price="99" class="form-radio text-teal-600">
-                            <span>Medium - ₹99</span>
+                            <input type="radio" name="HEALTHYFRUITSDESSERTSize" value="medium" data-price="109" class="form-radio text-teal-600">
+                            <span>Medium - ₹109</span>
                         </label>
                         <label class="flex items-center space-x-2 text-gray-700">
-                            <input type="radio" name="HEALTHYFRUITSDESSERTSize" value="large" data-price="119" class="form-radio text-teal-600">
-                            <span>Large - ₹119</span>
+                            <input type="radio" name="HEALTHYFRUITSDESSERTSize" value="large" data-price="129" class="form-radio text-teal-600">
+                            <span>Large - ₹129</span>
                         </label>
                     </div>
-                    <button class="btn-primary w-full add-to-cart-btn"
+                    <button class="btn-primary w-full add-to-cart-btn mt-auto"
                             data-product-id="3"
                             data-product-name="HEALTHY FRUITS DESSERT"
                             data-radio-group-name="HEALTHYFRUITSDESSERTSize"> <!-- Added data-radio-group-name -->
@@ -335,58 +466,55 @@
             </div>
             
             <!-- Subscription Plans -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-                
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto items-stretch">
+
                 <!-- Veg Salad Bowl Plan -->
-                <div class="product-card p-8 shadow-lg text-center bg-gradient-to-br from-green-50 to-teal-50 border-2 border-green-200">
+                <div class="product-card p-8 shadow-lg text-center bg-gradient-to-br from-green-50 to-teal-50 border-2 border-green-200 flex flex-col h-full">
                     <img src="salad1.jpg" alt="VEG SALAD BOWL" class="product-image mb-6">
                     <h4 class="text-2xl font-bold text-gray-900 mb-4">VEG SALAD BOWL</h4>
                     <p class="text-gray-600 mb-6">Rich in Protein and Fiber</p>
                     <div class="space-y-4 mb-8">
                         <div class="flex justify-between items-center py-2 border-b border-green-200">
                             <span class="text-gray-700 font-medium">Small</span>
-                            <span class="text-xl font-bold text-green-600">₹1,550*</span>
+                            <span class="text-xl font-bold text-green-600">₹1,750*</span>
                         </div>
                         <div class="flex justify-between items-center py-2 border-b border-green-200">
                             <span class="text-gray-700 font-medium">Medium</span>
-                            <span class="text-xl font-bold text-green-600">₹2,600*</span>
+                            <span class="text-xl font-bold text-green-600">₹2,800*</span>
                         </div>
                         <div class="flex justify-between items-center py-2">
                             <span class="text-gray-700 font-medium">Large</span>
-                            <span class="text-xl font-bold text-green-600">₹4,200*</span>
+                            <span class="text-xl font-bold text-green-600">₹4,400*</span>
                         </div>
                     </div>
-                    <button class="btn-primary w-full py-3 text-lg shadow-md hover:shadow-lg transform hover:-translate-y-1 transition-all duration-300 subscribe-now-btn"
+                    <div class="w-full mb-3 text-left addon-dropdown" data-addon-group="tofu" data-selected-value="None" data-selected-price="0">
+                        <label class="addon-label"><i class="fas fa-seedling"></i> Add Tofu</label>
+                        <button type="button" class="addon-select-btn">
+                            <span class="addon-select-value">None</span>
+                            <i class="fas fa-chevron-down addon-chevron"></i>
+                        </button>
+                        <ul class="addon-menu hidden">
+                            <li class="addon-option active" data-value="None" data-price="0">None</li>
+                            <li class="addon-option" data-value="Tofu 50g" data-price="30">50g - ₹30</li>
+                            <li class="addon-option" data-value="Tofu 100g" data-price="50">100g - ₹50</li>
+                            <li class="addon-option" data-value="Tofu 200g" data-price="100">200g - ₹100</li>
+                        </ul>
+                    </div>
+                    <div class="w-full mb-6 text-left addon-dropdown" data-addon-group="paneer" data-selected-value="None" data-selected-price="0">
+                        <label class="addon-label"><i class="fas fa-cheese"></i> Add Paneer</label>
+                        <button type="button" class="addon-select-btn">
+                            <span class="addon-select-value">None</span>
+                            <i class="fas fa-chevron-down addon-chevron"></i>
+                        </button>
+                        <ul class="addon-menu hidden">
+                            <li class="addon-option active" data-value="None" data-price="0">None</li>
+                            <li class="addon-option" data-value="Paneer 50g" data-price="50">50g - ₹50</li>
+                            <li class="addon-option" data-value="Paneer 100g" data-price="90">100g - ₹90</li>
+                            <li class="addon-option" data-value="Paneer 200g" data-price="160">200g - ₹160</li>
+                        </ul>
+                    </div>
+                    <button class="btn-primary w-full py-3 text-lg shadow-md hover:shadow-lg transform hover:-translate-y-1 transition-all duration-300 subscribe-now-btn mt-auto"
                             data-plan-name="VEG SALAD BOWL"
-                            data-plan-description="Rich in Protein and Fiber"
-                            data-plan-small-price="1550"
-                            data-plan-medium-price="2600"
-                            data-plan-large-price="4200">
-                        Subscribe Now
-                    </button>
-                </div>
-
-                <!-- Veg Salad with Masala Curd Plan -->
-                <div class="product-card p-8 shadow-lg text-center bg-gradient-to-br from-orange-50 to-red-50 border-2 border-orange-200">
-                    <img src="salad.jpg" alt="VEG SALAD WITH MASALA CURD" class="product-image mb-6">
-                    <h4 class="text-2xl font-bold text-gray-900 mb-4">VEG SALAD WITH MASALA CURD</h4>
-                    <p class="text-gray-600 mb-6">Rich in Protein and Fiber</p>
-                    <div class="space-y-4 mb-8">
-                        <div class="flex justify-between items-center py-2 border-b border-orange-200">
-                            <span class="text-gray-700 font-medium">Small</span>
-                            <span class="text-xl font-bold text-orange-600">₹1,750*</span>
-                        </div>
-                        <div class="flex justify-between items-center py-2 border-b border-orange-200">
-                            <span class="text-gray-700 font-medium">Medium</span>
-                            <span class="text-xl font-bold text-orange-600">₹2,800*</span>
-                        </div>
-                        <div class="flex justify-between items-center py-2">
-                            <span class="text-gray-700 font-medium">Large</span>
-                            <span class="text-xl font-bold text-orange-600">₹4,400*</span>
-                        </div>
-                    </div>
-                    <button class="btn-primary w-full py-3 text-lg shadow-md hover:shadow-lg transform hover:-translate-y-1 transition-all duration-300 subscribe-now-btn"
-                            data-plan-name="VEG SALAD WITH MASALA CURD"
                             data-plan-description="Rich in Protein and Fiber"
                             data-plan-small-price="1750"
                             data-plan-medium-price="2800"
@@ -395,31 +523,86 @@
                     </button>
                 </div>
 
+                <!-- Veg Salad with Masala Curd Plan -->
+                <div class="product-card p-8 shadow-lg text-center bg-gradient-to-br from-orange-50 to-red-50 border-2 border-orange-200 flex flex-col h-full">
+                    <img src="salad.jpg" alt="VEG SALAD WITH MASALA CURD" class="product-image mb-6">
+                    <h4 class="text-2xl font-bold text-gray-900 mb-4">VEG SALAD WITH MASALA CURD</h4>
+                    <p class="text-gray-600 mb-6">Rich in Protein and Fiber</p>
+                    <div class="space-y-4 mb-8">
+                        <div class="flex justify-between items-center py-2 border-b border-orange-200">
+                            <span class="text-gray-700 font-medium">Small</span>
+                            <span class="text-xl font-bold text-orange-600">₹1,950*</span>
+                        </div>
+                        <div class="flex justify-between items-center py-2 border-b border-orange-200">
+                            <span class="text-gray-700 font-medium">Medium</span>
+                            <span class="text-xl font-bold text-orange-600">₹3,000*</span>
+                        </div>
+                        <div class="flex justify-between items-center py-2">
+                            <span class="text-gray-700 font-medium">Large</span>
+                            <span class="text-xl font-bold text-orange-600">₹4,600*</span>
+                        </div>
+                    </div>
+                    <div class="w-full mb-3 text-left addon-dropdown" data-addon-group="tofu" data-selected-value="None" data-selected-price="0">
+                        <label class="addon-label"><i class="fas fa-seedling"></i> Add Tofu</label>
+                        <button type="button" class="addon-select-btn">
+                            <span class="addon-select-value">None</span>
+                            <i class="fas fa-chevron-down addon-chevron"></i>
+                        </button>
+                        <ul class="addon-menu hidden">
+                            <li class="addon-option active" data-value="None" data-price="0">None</li>
+                            <li class="addon-option" data-value="Tofu 50g" data-price="30">50g - ₹30</li>
+                            <li class="addon-option" data-value="Tofu 100g" data-price="50">100g - ₹50</li>
+                            <li class="addon-option" data-value="Tofu 200g" data-price="100">200g - ₹100</li>
+                        </ul>
+                    </div>
+                    <div class="w-full mb-6 text-left addon-dropdown" data-addon-group="paneer" data-selected-value="None" data-selected-price="0">
+                        <label class="addon-label"><i class="fas fa-cheese"></i> Add Paneer</label>
+                        <button type="button" class="addon-select-btn">
+                            <span class="addon-select-value">None</span>
+                            <i class="fas fa-chevron-down addon-chevron"></i>
+                        </button>
+                        <ul class="addon-menu hidden">
+                            <li class="addon-option active" data-value="None" data-price="0">None</li>
+                            <li class="addon-option" data-value="Paneer 50g" data-price="50">50g - ₹50</li>
+                            <li class="addon-option" data-value="Paneer 100g" data-price="90">100g - ₹90</li>
+                            <li class="addon-option" data-value="Paneer 200g" data-price="160">200g - ₹160</li>
+                        </ul>
+                    </div>
+                    <button class="btn-primary w-full py-3 text-lg shadow-md hover:shadow-lg transform hover:-translate-y-1 transition-all duration-300 subscribe-now-btn mt-auto"
+                            data-plan-name="VEG SALAD WITH MASALA CURD"
+                            data-plan-description="Rich in Protein and Fiber"
+                            data-plan-small-price="1950"
+                            data-plan-medium-price="3000"
+                            data-plan-large-price="4600">
+                        Subscribe Now
+                    </button>
+                </div>
+
                 <!-- Healthy Fruits Dessert Plan -->
-                <div class="product-card p-8 shadow-lg text-center bg-gradient-to-br from-purple-50 to-pink-50 border-2 border-purple-200">
+                <div class="product-card p-8 shadow-lg text-center bg-gradient-to-br from-purple-50 to-pink-50 border-2 border-purple-200 flex flex-col h-full">
                     <img src="pie.jpg" alt="HEALTHY FRUITS DESSERT" class="product-image mb-6">
                     <h4 class="text-2xl font-bold text-gray-900 mb-4">HEALTHY FRUITS DESSERT</h4>
                     <p class="text-gray-600 mb-6">No Added Sugar & Cream, Sweetened with Dates</p>
                     <div class="space-y-4 mb-8">
                         <div class="flex justify-between items-center py-2 border-b border-purple-200">
                             <span class="text-gray-700 font-medium">Small</span>
-                            <span class="text-xl font-bold text-purple-600">₹1,750*</span>
+                            <span class="text-xl font-bold text-purple-600">₹1,950*</span>
                         </div>
                         <div class="flex justify-between items-center py-2 border-b border-purple-200">
                             <span class="text-gray-700 font-medium">Medium</span>
-                            <span class="text-xl font-bold text-purple-600">₹2,600*</span>
+                            <span class="text-xl font-bold text-purple-600">₹2,800*</span>
                         </div>
                         <div class="flex justify-between items-center py-2">
                             <span class="text-gray-700 font-medium">Large</span>
-                            <span class="text-xl font-bold text-purple-600">₹3,100*</span>
+                            <span class="text-xl font-bold text-purple-600">₹3,300*</span>
                         </div>
                     </div>
-                    <button class="btn-primary w-full py-3 text-lg shadow-md hover:shadow-lg transform hover:-translate-y-1 transition-all duration-300 subscribe-now-btn"
+                    <button class="btn-primary w-full py-3 text-lg shadow-md hover:shadow-lg transform hover:-translate-y-1 transition-all duration-300 subscribe-now-btn mt-auto"
                             data-plan-name="HEALTHY FRUITS DESSERT"
                             data-plan-description="No Added Sugar & Cream, Sweetened with Dates"
-                            data-plan-small-price="1750"
-                            data-plan-medium-price="2600"
-                            data-plan-large-price="3100">
+                            data-plan-small-price="1950"
+                            data-plan-medium-price="2800"
+                            data-plan-large-price="3300">
                         Subscribe Now
                     </button>
                 </div>
@@ -1044,6 +1227,42 @@
             getCurrentLocationAndCalculateDistance();
         });
 
+        // Custom Add-on (Tofu/Paneer) dropdown logic
+        document.querySelectorAll('.addon-dropdown').forEach(dropdown => {
+            const btn = dropdown.querySelector('.addon-select-btn');
+            const valueSpan = dropdown.querySelector('.addon-select-value');
+            const menu = dropdown.querySelector('.addon-menu');
+            const options = dropdown.querySelectorAll('.addon-option');
+
+            btn.addEventListener('click', (event) => {
+                event.stopPropagation();
+                const isOpen = !menu.classList.contains('hidden');
+                document.querySelectorAll('.addon-menu').forEach(m => m.classList.add('hidden'));
+                document.querySelectorAll('.addon-select-btn').forEach(b => b.classList.remove('open'));
+                if (!isOpen) {
+                    menu.classList.remove('hidden');
+                    btn.classList.add('open');
+                }
+            });
+
+            options.forEach(option => {
+                option.addEventListener('click', () => {
+                    options.forEach(o => o.classList.remove('active'));
+                    option.classList.add('active');
+                    valueSpan.textContent = option.textContent;
+                    dropdown.dataset.selectedValue = option.dataset.value;
+                    dropdown.dataset.selectedPrice = option.dataset.price;
+                    menu.classList.add('hidden');
+                    btn.classList.remove('open');
+                });
+            });
+        });
+
+        document.addEventListener('click', () => {
+            document.querySelectorAll('.addon-menu').forEach(m => m.classList.add('hidden'));
+            document.querySelectorAll('.addon-select-btn').forEach(b => b.classList.remove('open'));
+        });
+
         // Add to Cart button logic
         document.querySelectorAll('.add-to-cart-btn').forEach(button => {
             button.addEventListener('click', (event) => {
@@ -1056,9 +1275,26 @@
 
                 if (sizeRadios.length > 0) {
                     const selectedSize = sizeRadios[0].value;
-                    const price = parseFloat(sizeRadios[0].dataset.price);
+                    let price = parseFloat(sizeRadios[0].dataset.price);
 
-                    const existingItem = cart.find(item => item.id === productId && item.size === selectedSize);
+                    const productCard = event.target.closest('.product-card');
+                    const addonLabels = [];
+
+                    const tofuDropdown = productCard.querySelector('.addon-dropdown[data-addon-group="tofu"]');
+                    if (tofuDropdown && tofuDropdown.dataset.selectedValue !== 'None') {
+                        price += parseFloat(tofuDropdown.dataset.selectedPrice);
+                        addonLabels.push(tofuDropdown.dataset.selectedValue);
+                    }
+
+                    const paneerDropdown = productCard.querySelector('.addon-dropdown[data-addon-group="paneer"]');
+                    if (paneerDropdown && paneerDropdown.dataset.selectedValue !== 'None') {
+                        price += parseFloat(paneerDropdown.dataset.selectedPrice);
+                        addonLabels.push(paneerDropdown.dataset.selectedValue);
+                    }
+
+                    const sizeLabel = addonLabels.length > 0 ? `${selectedSize} + ${addonLabels.join(' + ')}` : selectedSize;
+
+                    const existingItem = cart.find(item => item.id === productId && item.size === sizeLabel);
 
                     if (existingItem) {
                         existingItem.quantity++;
@@ -1066,7 +1302,7 @@
                         cart.push({
                             id: productId,
                             name: productName,
-                            size: selectedSize,
+                            size: sizeLabel,
                             price: price,
                             quantity: 1
                         });
@@ -1281,28 +1517,40 @@
                 const smallPrice = event.target.dataset.planSmallPrice;
                 const mediumPrice = event.target.dataset.planMediumPrice;
                 const largePrice = event.target.dataset.planLargePrice;
-                
+
+                const planCard = event.target.closest('.product-card');
+                const tofuDropdown = planCard.querySelector('.addon-dropdown[data-addon-group="tofu"]');
+                const paneerDropdown = planCard.querySelector('.addon-dropdown[data-addon-group="paneer"]');
+                const tofuAddon = tofuDropdown ? tofuDropdown.dataset.selectedValue : 'None';
+                const paneerAddon = paneerDropdown ? paneerDropdown.dataset.selectedValue : 'None';
+
                 // Store current plan data
                 currentSubscriptionPlan = {
                     name: planName,
                     description: planDescription,
                     smallPrice: smallPrice,
                     mediumPrice: mediumPrice,
-                    largePrice: largePrice
+                    largePrice: largePrice,
+                    tofuAddon: tofuAddon,
+                    paneerAddon: paneerAddon
                 };
-                
+
                 // Update modal content
                 document.getElementById('subscriptionPlanName').textContent = planName;
                 document.getElementById('subscriptionPlanTitle').textContent = planName;
                 document.getElementById('subscriptionPlanDescription').textContent = planDescription;
-                
+
                 // Show pricing options
+                const addonLines = [];
+                if (tofuAddon !== 'None') addonLines.push(tofuAddon);
+                if (paneerAddon !== 'None') addonLines.push(paneerAddon);
                 const priceElement = document.getElementById('subscriptionPlanPrice');
                 priceElement.innerHTML = `
                     <div class="space-y-2">
                         <div>Small: ₹${parseInt(smallPrice).toLocaleString()}</div>
                         <div>Medium: ₹${parseInt(mediumPrice).toLocaleString()}</div>
                         <div>Large: ₹${parseInt(largePrice).toLocaleString()}</div>
+                        ${addonLines.length > 0 ? `<div class="text-sm text-gray-500 pt-1">Add-ons: ${addonLines.join(', ')} (per meal)</div>` : ''}
                     </div>
                 `;
                 
@@ -1372,6 +1620,18 @@
                 subscriptionDetails += `Medium: ₹${parseInt(currentSubscriptionPlan.mediumPrice).toLocaleString()}*\n`;
                 subscriptionDetails += `Large: ₹${parseInt(currentSubscriptionPlan.largePrice).toLocaleString()}*\n`;
                 subscriptionDetails += `\n`;
+
+                if (currentSubscriptionPlan.tofuAddon !== 'None' || currentSubscriptionPlan.paneerAddon !== 'None') {
+                    subscriptionDetails += `*Add-ons (per meal):*\n`;
+                    if (currentSubscriptionPlan.tofuAddon !== 'None') {
+                        subscriptionDetails += `${currentSubscriptionPlan.tofuAddon}\n`;
+                    }
+                    if (currentSubscriptionPlan.paneerAddon !== 'None') {
+                        subscriptionDetails += `${currentSubscriptionPlan.paneerAddon}\n`;
+                    }
+                    subscriptionDetails += `\n`;
+                }
+
                 subscriptionDetails += `*Subscription Terms:*\n`;
                 subscriptionDetails += `• 30 meals over 45 days\n`;
                 subscriptionDetails += `• Flexible delivery schedule\n`;
