@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GoodFuel.Life - Health On Your Plate</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" xintegrity="sha512-Fo3rlrZj/k7ujgHVh8Q1+4uW0aFw5r0yU/p8W5c5g5B5/g5P0B0G6fN0D+qD5/p8z3o2+w+z0w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 
     <style>
@@ -919,7 +919,15 @@
         ========================================
         */
         
-        let cart = [];
+        // Load cart from localStorage if available
+        let cart = (() => {
+            try {
+                const saved = localStorage.getItem('goodfuel_cart');
+                return saved ? JSON.parse(saved) : [];
+            } catch (e) {
+                return [];
+            }
+        })();
         let deliveryCharge = 0;
         let deliveryDistance = 0;
         let isDeliveryAvailable = false;
@@ -969,6 +977,21 @@
             }
         }
 
+        // Function to persist cart to localStorage
+        function saveCart() {
+            try {
+                localStorage.setItem('goodfuel_cart', JSON.stringify(cart));
+            } catch (e) {
+                // localStorage not available; cart will not persist
+            }
+        }
+
+        // Function to validate Indian mobile number (10 digits, starting with 6-9)
+        function validateIndianMobile(phoneNumber) {
+            const digits = phoneNumber.replace(/^\+?91/, '').replace(/\s/g, '');
+            return /^[6-9]\d{9}$/.test(digits);
+        }
+
         // Function to render cart items in the modal
         function renderCartItems() {
             cartItemsContainer.innerHTML = ''; // Clear previous items
@@ -1010,6 +1033,7 @@
                 if (cart[index].quantity <= 0) {
                     removeItem(index);
                 } else {
+                    saveCart();
                     renderCartItems();
                     updateCartCount();
                 }
@@ -1019,6 +1043,7 @@
         // Function to remove item from cart
         function removeItem(index) {
             cart.splice(index, 1);
+            saveCart();
             renderCartItems();
             updateCartCount();
         }
@@ -1058,8 +1083,6 @@
 
         // Function to get user's current location and calculate distance
         function getCurrentLocationAndCalculateDistance() {
-            console.log('Starting location request...');
-            
             if (!navigator.geolocation) {
                 distanceInfoElement.textContent = 'Geolocation is not supported by this browser';
                 return;
@@ -1073,21 +1096,14 @@
 
             navigator.geolocation.getCurrentPosition(
                 (position) => {
-                    console.log('Location obtained successfully:', position);
                     userLocation = {
                         lat: position.coords.latitude,
                         lng: position.coords.longitude
                     };
-                    console.log('User location set to:', userLocation);
 
                     // Calculate distance using actual car route (Google Maps API)
-                    console.log('Starting distance calculation...');
-                    console.log('Shop location:', SHOP_LOCATION);
-                    console.log('User location:', userLocation);
-                    
                     calculateCarRouteDistance(SHOP_LOCATION, userLocation)
                         .then(distance => {
-                            console.log('Distance calculated successfully:', distance);
                             if (distance && distance > 0) {
                                 deliveryDistance = distance;
                                 calculateDeliveryCharge(distance);
@@ -1095,7 +1111,6 @@
                                 console.error('Invalid distance returned:', distance);
                                 // Use fallback calculation
                                 const fallbackDistance = calculateApproximateDistance(SHOP_LOCATION, userLocation);
-                                console.log('Using fallback distance:', fallbackDistance);
                                 deliveryDistance = fallbackDistance;
                                 calculateDeliveryCharge(fallbackDistance);
                             }
@@ -1104,7 +1119,6 @@
                             console.error('Error calculating route distance:', error);
                             // Use fallback calculation
                             const fallbackDistance = calculateApproximateDistance(SHOP_LOCATION, userLocation);
-                            console.log('Using fallback distance:', fallbackDistance);
                             deliveryDistance = fallbackDistance;
                             calculateDeliveryCharge(fallbackDistance);
                         });
@@ -1150,9 +1164,7 @@
             
             if (!apiKey || apiKey === 'YOUR_API_KEY') {
                 // Fallback to approximate calculation if no API key
-                console.warn('No Google Maps API key provided. Using approximate distance calculation.');
                 const fallbackDistance = calculateApproximateDistance(origin, destination);
-                console.log('Using fallback distance calculation:', fallbackDistance);
                 return Promise.resolve(fallbackDistance);
             }
             
@@ -1165,29 +1177,22 @@
                         // Extract distance in kilometers
                         const distanceText = data.rows[0].elements[0].distance.text;
                         const distanceKm = parseFloat(distanceText.replace(' km', ''));
-                        console.log('Google Maps API distance calculated:', distanceKm);
                         return distanceKm;
                     } else {
                         console.error('Google Maps API error:', data);
                         // Fallback to approximate calculation
-                        const fallbackDistance = calculateApproximateDistance(origin, destination);
-                        console.log('API failed, using fallback distance:', fallbackDistance);
-                        return fallbackDistance;
+                        return calculateApproximateDistance(origin, destination);
                     }
                 })
                 .catch(error => {
                     console.error('Error fetching route distance:', error);
                     // Fallback to approximate calculation
-                    const fallbackDistance = calculateApproximateDistance(origin, destination);
-                    console.log('Fetch error, using fallback distance:', fallbackDistance);
-                    return fallbackDistance;
+                    return calculateApproximateDistance(origin, destination);
                 });
         }
         
         // Fallback function for approximate distance calculation
         function calculateApproximateDistance(point1, point2) {
-            console.log('Calculating approximate distance between:', point1, 'and', point2);
-            
             // Validate coordinates
             if (!point1 || !point2 || typeof point1.lat !== 'number' || typeof point1.lng !== 'number' || 
                 typeof point2.lat !== 'number' || typeof point2.lng !== 'number') {
@@ -1206,10 +1211,7 @@
             const straightLineDistance = R * c;
             
             // Add 20% buffer for actual road distance (approximate)
-            const finalDistance = straightLineDistance * 1.2;
-            console.log('Straight line distance:', straightLineDistance.toFixed(2), 'km');
-            console.log('With 20% road buffer:', finalDistance.toFixed(2), 'km');
-            return finalDistance;
+            return straightLineDistance * 1.2;
         }
 
         // Function to update total price
@@ -1223,7 +1225,6 @@
 
         // Location button event listener
         getLocationBtn.addEventListener('click', () => {
-            console.log('Location button clicked! Starting location request...');
             getCurrentLocationAndCalculateDistance();
         });
 
@@ -1307,6 +1308,7 @@
                             quantity: 1
                         });
                     }
+                    saveCart();
                     updateCartCount();
                     // Optionally show a quick success message
                     event.target.textContent = 'Added!';
@@ -1397,6 +1399,15 @@
                 return;
             }
 
+            // Validate Indian mobile number (10 digits, starting with 6-9)
+            if (!validateIndianMobile(customerMobile)) {
+                messageBox.innerHTML = '<p class="font-semibold text-red-700">Please enter a valid 10-digit Indian mobile number.</p>';
+                messageBox.classList.remove('hidden');
+                messageBox.classList.remove('bg-green-100', 'text-green-800');
+                messageBox.classList.add('bg-red-100', 'text-red-700');
+                return;
+            }
+
             const whatsappNumber = "8527594368";
             
             // Use stored user location if available, otherwise use shop location as fallback
@@ -1436,8 +1447,6 @@
                 orderDetails += `Delivery Charge: ₹${deliveryCharge} (${deliveryDistance.toFixed(1)}km)\n`;
                 orderDetails += `Total: ₹${(subtotal + deliveryCharge).toFixed(0)}`;
 
-                console.log("WhatsApp message content before encoding:", orderDetails); // Added for debugging
-
                 const encodedMessage = encodeURIComponent(orderDetails);
                 
                 // Open WhatsApp with the order details
@@ -1455,6 +1464,7 @@
                 messageBox.classList.add('bg-green-100', 'text-green-800');
 
                 cart = []; // Clear cart after order attempt
+                saveCart();
                 deliveryCharge = 0;
                 deliveryDistance = 0;
                 isDeliveryAvailable = false;
@@ -1594,6 +1604,15 @@
                 return;
             }
 
+            // Validate Indian mobile number (10 digits, starting with 6-9)
+            if (!validateIndianMobile(customerMobile)) {
+                subscriptionMessageBox.innerHTML = '<p class="font-semibold text-red-700">Please enter a valid 10-digit Indian mobile number.</p>';
+                subscriptionMessageBox.classList.remove('hidden');
+                subscriptionMessageBox.classList.remove('bg-green-100', 'text-green-800');
+                subscriptionMessageBox.classList.add('bg-red-100', 'text-red-700');
+                return;
+            }
+
             const whatsappNumber = "8527594368";
             
             // Send subscription to WhatsApp
@@ -1640,7 +1659,6 @@
                 subscriptionDetails += `\n`;
                 subscriptionDetails += `Please confirm the subscription and let me know which size you prefer. Thank you!`;
 
-                console.log("WhatsApp subscription message content before encoding:", subscriptionDetails);
 
                 const encodedMessage = encodeURIComponent(subscriptionDetails);
                 
